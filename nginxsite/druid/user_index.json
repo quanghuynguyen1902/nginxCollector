@@ -1,0 +1,52 @@
+{
+  "type" : "index",
+  "spec" : {
+    "dataSchema" : {
+      "dataSource" : "request",
+      "timestampSpec": {
+        "column": "timestamp",
+        "format": "iso"
+      },
+      "dimensionsSpec" : {
+        "dimensions" : [
+          "created_at",
+          "client",
+          "status",
+          "url",
+          "user_agent",
+          "request_method",
+          "upstream_connect_time",
+          "upstream_header_time",
+          "upstream_response_time",
+          "request_time",
+          "size",
+          "user_id",
+          "app_id"
+        ]
+      },
+      "granularitySpec" : {
+        "type" : "uniform",
+        "segmentGranularity" : "month",
+        "queryGranularity" : "minute",
+        "interval": null
+      }
+    },
+    "ioConfig" : {
+      "type" : "index",
+      "inputSource" : {
+        "type" : "local",
+        "baseDir" : "/home/quanghuy/Desktop/nginxDjango/nginxsite/druid",
+        "filter" : "user.json"
+      },
+      "inputFormat" : {
+        "type" : "json"
+      },
+      "appendToExisting" : true
+    },
+    "tuningConfig" : {
+      "type" : "index_parallel",
+      "maxRowsPerSegment" : 5000000,
+      "maxRowsInMemory" : 25000
+    }
+  }
+}
