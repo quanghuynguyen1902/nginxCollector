@@ -30,11 +30,9 @@ map_user = {}
 
 def save_user_mongo(map_user, collection):
     for user in map_user.values(): 
-        user_exist = collection.find_one({"user": user})
+        user_exist = collection.find_one({"$and":[{"user": user}, {"app_id": app_id}]})
         user_id = generate()
-        user_id_exist = collection.find_one({"user_id": user_id})
-        app_id_exist = collection.find_one({"app_id": app_id})
-        if user_exist == None and user_id_exist == None:
+        if user_exist == None:
             data = {
                 "user_id": user_id,
                 "user": user,
@@ -48,7 +46,7 @@ def save_data_druid(authorization_field, collection, map_user, app_id):
             data = json.loads(data.rstrip())
             json_data = {}
             json_data['timestamp'] = datetime.datetime.utcfromtimestamp(float(data['timestamp'])).isoformat() + 'Z'
-            json_data['created_at'] = data['timestamp']
+            json_data['created_at'] = float(data['timestamp'])
             json_data['user_agent'] = data['user_agent']
             json_data['url'] = data['url']
             json_data['request_method'] = data['request_method']
