@@ -6,5 +6,6 @@ urlpatterns = [
     path('requests-data/filter/', views.filter),
     path('requests-data/users/', views.get_users),
     path('requests-data/request-analytic/', views.request_method_analytic),
-    path('requests-data/user-detail/', views.user_detail)
+    path('requests-data/user-detail/', views.user_detail),
+    path('api-key/', views.api_key)
 ]

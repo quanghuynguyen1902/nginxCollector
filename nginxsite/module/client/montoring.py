@@ -10,13 +10,17 @@ import calendar, time
 client = MongoClient('mongodb://localhost:27017/')
 db = client.app
 collection = db.users
-Session = sessionmaker()
-engine = create_engine('druid+http://localhost:8082/druid/v2/sql/')
-requestss = Table('request', MetaData(bind=engine), autoload=True)
-# requestss = []
-# engine = []
-Session.configure(bind=engine)
-session = Session()
+
+try:
+    Session = sessionmaker()
+    engine = create_engine('druid+http://localhost:8082/druid/v2/sql/')
+    requestss = Table('request', MetaData(bind=engine), autoload=True)
+    # requestss = []
+    # engine = []
+    Session.configure(bind=engine)
+    session = Session()
+except:
+    print("Not connect druid")
 
 def get_data(app_id, page=1):
     per_page = 10

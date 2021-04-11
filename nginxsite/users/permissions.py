@@ -1,17 +1,10 @@
-from rest_framework import permissions
-
-from users.models import UserAPIKey
-
-
-class IsOwnerOrReadOnly(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.email == request.user.email
+from rest_framework.permissions import BasePermission
+from users.models import User
 
 
-class IsSuperUser(permissions.BasePermission):
-
+class CheckAppKey(BasePermission):
     def has_permission(self, request, view):
-        return request.user and request.user.is_superuser
+        # API_KEY should be in request headers to authenticate requests
+        app_key = request.META.get('HTTP_APP_KEY')
+        user = User.objects.filter(app_key=app_key).exists()
+        return user
