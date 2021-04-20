@@ -15,8 +15,6 @@ try:
     Session = sessionmaker()
     engine = create_engine('druid+http://localhost:8082/druid/v2/sql/')
     requestss = Table('request', MetaData(bind=engine), autoload=True)
-    # requestss = []
-    # engine = []
     Session.configure(bind=engine)
     session = Session()
 except:

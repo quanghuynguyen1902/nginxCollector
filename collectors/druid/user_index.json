@@ -35,7 +35,7 @@
       "type" : "index",
       "inputSource" : {
         "type" : "local",
-        "baseDir" : "/home/quanghuy/Desktop/nginxDjango/nginxsite/druid",
+        "baseDir" : "/app/druid",
         "filter" : "user.json"
       },
       "inputFormat" : {

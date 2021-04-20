@@ -3,10 +3,13 @@ import os
 import string
 import random
 from datetime import datetime
+from pathlib import Path
 
 now = datetime.now()
-folder_data = "../dataStore/raw/"
-folder_file = "../dataStore/file/"
+folder_data = "dataStore/raw/"
+folder_file = "dataStore/file/"
+
+
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -15,22 +18,25 @@ def generator_file():
     return id_generator()+date_time
 
 def write_data(datas, app_key):
-    directory = folder_data + app_key + '/'
+    directory = os.path.abspath(folder_data + app_key)
     try:
+        print(1)
         os.stat(directory)
     except: 
+        print(2)
         os.mkdir(directory)   
-    file_data = folder_data + app_key + '/' + generator_file() + '.json'
+    file_data = os.path.abspath(folder_data + app_key + '/' + generator_file() + '.json')
     while (len(datas) > 0):
         with open(file_data, "a") as out:
             data = datas.pop()
             json.dump(data, out)
             out.write("\n")
             if(os.stat(file_data).st_size > 1024*64):
-                filename = folder_file + generator_file() + '.txt'
+                filename = os.path.abspath(folder_file + generator_file() + '.txt')
                 with open(filename, "w") as file:
                     file.write(file_data)
-                file_data = folder_data + app_key + '/' + generator_file() + '.json'
-    filename = folder_file  + generator_file() + '.txt'
+                file_data = os.path.abspath(folder_data + app_key + '/' + generator_file() + '.json')
+    filename = os.path.abspath(folder_file  + generator_file() + '.txt')
     with open(filename, "w") as file:
         file.write(file_data)
+

@@ -25,14 +25,6 @@ class UserSerializer(serializers.ModelSerializer):
         #     pass
         return user
 
-class AppKeySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'slug', 'created_at', 'last_login', "app_id", "api_identify", "authorization_field"]
-
-        # read_only_fields = ['slug', 'email', 'password']
-        # extra_kwargs = {'password': {'write_only': True}}
-
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -66,9 +58,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
             return user
 
 class ApiAndAuthorizationSerializer(serializers.ModelSerializer):
-    model = User
     api_identify = serializers.CharField(required=True)
     authorization_field = serializers.CharField(required=True)
+    class Meta:
+        model = User
+        fields = [
+            "authorization_field",
+            "api_identify"
+        ]
+        
 
 class CustomTokenObtainSerializer(TokenObtainSerializer):
     def validate(self, attrs):
@@ -96,6 +94,7 @@ class CustomTokenObtainPairSerializer(CustomTokenObtainSerializer):
         refresh = self.get_token(self.user)
 
         data['username'] = str(self.user.username)
+        data['slug'] = str(self.user.slug)
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
 

@@ -13,4 +13,4 @@ class DataRaw(APIView):
         app_key = request.META.get('HTTP_APP_KEY')
         data=request.data['data']
         collector.write_data(data, app_key)
-        return Response(data)
+        return Response({"message": "success"})

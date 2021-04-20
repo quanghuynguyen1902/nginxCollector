@@ -1,11 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserCreateSerializer, UserSerializer, AppKeySerializer, ApiAndAuthorizationSerializer, CustomTokenObtainPairSerializer
+from .serializers import UserCreateSerializer, UserSerializer, ApiAndAuthorizationSerializer, CustomTokenObtainPairSerializer
 from .models import User
 from rest_framework import status, mixins
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .permissions import CheckAppKey
 
@@ -42,21 +42,17 @@ class UserViewSet(mixins.CreateModelMixin,
         user.api_identify = api_identify
         user.authorization_field = authorization_field
         user.save()
-        return Response({"message": "success"})
-        
-
-
-
-class UserViewByAppKey(APIView):
-    permission_classes = [CheckAppKey]
-
-    def get(self, request):
-        app_key = request.META.get('HTTP_APP_KEY')
-        user = User.objects.get(app_key=app_key)
-        serializer = AppKeySerializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user(request):
+    user = request.user
+    return Response({"authorization_field": user.authorization_field, "api_identify": user.api_identify})
