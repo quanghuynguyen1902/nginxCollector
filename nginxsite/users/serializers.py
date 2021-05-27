@@ -5,6 +5,7 @@ from rest_framework_simplejwt.serializers import PasswordField, TokenObtainSeria
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.validators import validate_email
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -41,21 +42,21 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "password",
-            "password2",
+            "password2"
         ]
         extra_kwargs = {"password": {"write_only": True}}
-    
+        
 
-        def create(self, validated_data):
-            username = validated_data["username"]
-            email = validated_data["email"]
-            password = validated_data["password"]
-            password2 = validated_data["password2"]
-         
-            user = User(username=username, email=email)
-            user.set_password(password)
-            user.save()
-            return user
+    def create(self, validated_data):
+        username = validated_data["username"]
+        email = validated_data["email"]
+        password = validated_data["password"]
+        password2 = validated_data["password2"]
+        
+        user = User(username=username, email=email)
+        user.set_password(password)
+        user.save()
+        return user
 
 class ApiAndAuthorizationSerializer(serializers.ModelSerializer):
     api_identify = serializers.CharField(required=True)

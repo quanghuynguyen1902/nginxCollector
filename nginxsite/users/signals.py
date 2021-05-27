@@ -4,6 +4,7 @@ from django.utils.text import slugify
 import uuid
 from core.utils import generate_random_string, generate_app_key
 from users.models import User
+from notifications.models.notification_count import NotificationCount
 
 
 @receiver(pre_save, sender=User)
@@ -40,3 +41,8 @@ def add_app_id_to_user(sender, instance, *args, **kwargs):
             else:
                 break
         instance.app_id = app_id
+
+@receiver(post_save, sender=User)
+def add_notification_count_to_user(sender, instance, *args, **kwargs):
+    if not NotificationCount.objects.filter(user=instance):
+        NotificationCount.objects.create(user=instance, quantity=0)

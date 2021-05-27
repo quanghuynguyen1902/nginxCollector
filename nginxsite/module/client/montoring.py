@@ -7,14 +7,14 @@ from pymongo import MongoClient
 from datetime import datetime
 import calendar, time
 
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb://quanghuy:12345678@mongo:27017/')
 db = client.app
 collection = db.users
 
 try:
     Session = sessionmaker()
-    engine = create_engine('druid+http://localhost:8082/druid/v2/sql/')
-    requestss = Table('request', MetaData(bind=engine), autoload=True)
+    engine = create_engine('druid+http://broker:8082/druid/v2/sql/')
+    requestss = Table('requests', MetaData(bind=engine), autoload=True)
     Session.configure(bind=engine)
     session = Session()
 except:
@@ -22,11 +22,13 @@ except:
 
 def get_data(app_id, page=1):
     per_page = 10
+    print(app_id)
     page = int(page)
     data = []
     counts = 0
     try:
         counts = session.query(requestss).count()
+        print(counts)
         querys = session.query(requestss).order_by(requestss.c.__time).limit(per_page).offset((page-1) * per_page)
         results = [{**row} for row in querys]
         for result in results:

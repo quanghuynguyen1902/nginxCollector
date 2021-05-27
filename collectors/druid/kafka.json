@@ -1,15 +1,25 @@
 {
     "type": "kafka",
     "dataSchema": {
-      "dataSource": "test-kafka",
+      "dataSource": "requests",
       "timestampSpec": {
         "column": "timestamp"
       },
       "dimensionsSpec": {
-        "dimensions": [
+        "dimensions" : [
           "created_at",
+          "client",
           "status",
-          "size"
+          "url",
+          "user_agent",
+          "request_method",
+          "upstream_connect_time",
+          "upstream_header_time",
+          "upstream_response_time",
+          "request_time",
+          "size",
+          "user_id",
+          "app_id"
         ]
       },
       "granularitySpec": {
@@ -24,7 +34,7 @@
         "type": "json"
       },
       "consumerProperties": {
-        "bootstrap.servers": "localhost:9092"
+        "bootstrap.servers": "kafka:9092"
       },
       "taskCount": 1,
       "replicas": 1,

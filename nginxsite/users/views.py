@@ -8,16 +8,19 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .permissions import CheckAppKey
+from rest_framework import viewsets
 
 class UserCreateView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = UserCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return None
+        user = serializer.save()
+        viewsets.ReadOnlyModelViewSet
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         
 
 class UserViewSet(mixins.CreateModelMixin,
