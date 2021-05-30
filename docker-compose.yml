@@ -45,51 +45,7 @@ services:
     networks:
       - backend
 
-  collectors:
-    build:
-      context: ./collectors
-      dockerfile: Dockerfile.Web
-    restart: always
-    volumes:
-      - ./collectors:/app
-      - ./dataStore:/app/dataStore
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgresuser
-    networks:
-      - backend
-    env_file:
-      - ./collectors/.env
-  
-  processors:
-    image: processors
-    restart: always
-    volumes:
-      - ./dataStore:/app/dataStore
-      - ./processors:/app
-    networks:
-      - backend
-    env_file:
-      - ./processors/.env
-    
-  nginxsite:
-    build:
-      context: ./nginxsite
-      dockerfile: Dockerfile.Web
-    restart: always
-    volumes:
-      - ./nginxsite:/app
-    ports:
-      - "8001:8001"
-    depends_on:
-      - postgresuser
-      - mongo
-    networks:
-      - backend
-    env_file:
-      - ./nginxsite/.env
-    
+      
   plugin:
     image: plugin
     volumes:
@@ -250,7 +206,51 @@ services:
     depends_on:
       - zookeeper-kafka
   
-              
+  collectors:
+    build:
+      context: ./collectors
+      dockerfile: Dockerfile.Web
+    restart: always
+    volumes:
+      - ./collectors:/app
+      - ./dataStore:/app/dataStore
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgresuser
+    networks:
+      - backend
+    env_file:
+      - ./collectors/.env
+  
+  processors:
+    image: processors
+    restart: always
+    volumes:
+      - ./dataStore:/app/dataStore
+      - ./processors:/app
+    networks:
+      - backend
+    env_file:
+      - ./processors/.env
+    
+  nginxsite:
+    build:
+      context: ./nginxsite
+      dockerfile: Dockerfile.Web
+    restart: always
+    volumes:
+      - ./nginxsite:/app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgresuser
+      - mongo
+    networks:
+      - backend
+    env_file:
+      - ./nginxsite/.env
+
 networks:
   backend:
     driver: bridge
