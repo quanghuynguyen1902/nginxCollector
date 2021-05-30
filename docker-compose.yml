@@ -28,7 +28,7 @@ services:
     env_file:
       - ./nginxsite/.env
     networks:
-      - nginx
+      - backend
   mongo:
     image: "mongo:latest"
     volumes:
@@ -43,7 +43,7 @@ services:
     env_file:
       - ./nginxsite/.env
     networks:
-      - nginx
+      - backend
 
   collectors:
     build:
@@ -52,14 +52,26 @@ services:
     restart: always
     volumes:
       - ./collectors:/app
+      - ./dataStore:/app/dataStore
     ports:
       - "8000:8000"
     depends_on:
       - postgresuser
     networks:
-      - nginx
+      - backend
     env_file:
       - ./collectors/.env
+  
+  processors:
+    image: processors
+    restart: always
+    volumes:
+      - ./dataStore:/app/dataStore
+      - ./processors:/app
+    networks:
+      - backend
+    env_file:
+      - ./processors/.env
     
   nginxsite:
     build:
@@ -74,9 +86,35 @@ services:
       - postgresuser
       - mongo
     networks:
-      - nginx
+      - backend
     env_file:
       - ./nginxsite/.env
+    
+  plugin:
+    image: plugin
+    volumes:
+      - ./plugin:/app
+      - ./client/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./client/var/log/nginx/access.log:/var/log/nginx/access.log
+    networks:
+      - backend
+    env_file:
+      - ./plugin/.env
+
+  nginxs:
+    image: nginx:latest
+    volumes:
+      - ./client/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./client/etc/nginx/header.js:/etc/nginx/header.js
+      - ./client/var/log/nginx:/var/log/nginx
+      - ./client/etc/nginx/conf.d/book.conf:/etc/nginx/conf.d/book.conf
+    restart: always
+    ports:
+      - 85:80
+      - 445:443
+    networks:
+      - backend
+
 
   postgres:
     container_name: postgres
@@ -88,14 +126,14 @@ services:
       - POSTGRES_USER=druid
       - POSTGRES_DB=druid
     networks:
-      - nginx
+      - backend
 
   # Need 3.5 or later for container nodes
   zookeeper:
     container_name: zookeeper
     image: zookeeper:3.5
     networks:
-      - nginx
+      - backend
     environment:
       - ZOO_MY_ID=1
 
@@ -113,7 +151,7 @@ services:
     command:
       - coordinator
     networks:
-      - nginx
+      - backend
     env_file:
       - environment
 
@@ -131,7 +169,7 @@ services:
     command:
       - broker
     networks:
-      - nginx
+      - backend
     env_file:
       - environment
 
@@ -150,7 +188,7 @@ services:
     command:
       - historical
     networks:
-      - nginx
+      - backend
     env_file:
       - environment
 
@@ -169,7 +207,7 @@ services:
     command:
       - middleManager
     networks:
-      - nginx
+      - backend
     env_file:
       - environment
 
@@ -187,7 +225,7 @@ services:
     command:
       - router
     networks:
-      - nginx
+      - backend
     env_file:
       - environment
   
@@ -197,7 +235,7 @@ services:
     ports:
       - "7181:2181"
     networks:
-      - nginx
+      - backend
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
@@ -205,7 +243,7 @@ services:
     ports:
       - "7092:9092"
     networks:
-      - nginx
+      - backend
     environment:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-kafka:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
@@ -214,5 +252,5 @@ services:
   
               
 networks:
-  nginx:
+  backend:
     driver: bridge

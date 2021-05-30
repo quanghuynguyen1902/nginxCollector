@@ -174,3 +174,4 @@ CORS_ORIGIN_WHITELIST = [
 CORS_ORIGIN_REGEX_WHITELIST = [
     'http://localhost:8080',
 ]
+ALLOWED_HOSTS = ['*']

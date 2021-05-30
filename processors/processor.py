@@ -10,23 +10,26 @@ import datetime
 import json
 from bson import json_util
 from kafka import KafkaProducer
+from dotenv import load_dotenv
+
+load_dotenv()
 
 now = datetime.datetime.now()
+
 #connect mongod
-client = MongoClient('mongodb://quanghuy:12345678@mongo:27017/')
+client = MongoClient(os.getenv('mongo'))
 db = client.app
 collection = db.users
 
 # path save name of file which store data
-dirs = "../dataStore/file"
-dirs_errors = "../dataStore/file_error"
+dirs = "/app/dataStore/file"
+dirs_errors = "/app/dataStore/file_error"
 # path file to save data which send to druid
 
-api_get_infor_of_app = 'http://localhost:8000/api/user-by-app-key/'
+api_get_infor_of_app = os.getenv('api_get_infor_of_app')
 
 # api send notification when api identify is error
-api_send_notification = 'http://nginxsite:8001/api/send-notification/'
-
+api_send_notification = os.getenv('api_send_notification')
 producer = KafkaProducer(bootstrap_servers='kafka:9092')
 
 token_collect = []
@@ -88,7 +91,7 @@ while True:
         headers_processor = {'content-type': 'application/json', 'app-key': app_key}
         app = requests.get(api_get_infor_of_app, headers=headers_processor).json()
         app_id, authorization_field, api_identify = app['app_id'], app['authorization_field'], app['api_identify']
-        api_identify = "http://a6b4ec48ac1d.ngrok.io/api/nginx/decode"
+        api_identify = 'http://eee080a9bf35.ngrok.io/api/nginx/decode'
         with open(filename_data) as file_data:
             datas = file_data.read().splitlines(True)
 
@@ -135,9 +138,8 @@ while True:
             os.remove(filename_data)
         # except:
             
-    else:
-        print("Not data")
-        break
-
+    # else:
+    #     print("Not data")
+    #     break
 
 

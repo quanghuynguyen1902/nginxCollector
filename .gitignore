@@ -8,3 +8,4 @@ coordinator_var
 var
 broker_var
 middle_var
+coordinator_conf

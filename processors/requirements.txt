@@ -1,0 +1,11 @@
+certifi==2020.12.5
+chardet==4.0.0
+idna==2.10
+pyparsing==2.4.7
+python-dotenv==0.17.1
+requests==2.25.1
+schedule==1.1.0
+urllib3==1.26.4
+pymongo==3.11.3
+random-object-id==2.0.0
+kafka-python==2.0.2

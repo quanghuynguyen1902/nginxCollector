@@ -20,10 +20,8 @@ def generator_file():
 def write_data(datas, app_key):
     directory = os.path.abspath(folder_data + app_key)
     try:
-        print(1)
         os.stat(directory)
     except: 
-        print(2)
         os.mkdir(directory)   
     file_data = os.path.abspath(folder_data + app_key + '/' + generator_file() + '.json')
     while (len(datas) > 0):
@@ -39,4 +37,3 @@ def write_data(datas, app_key):
     filename = os.path.abspath(folder_file  + generator_file() + '.txt')
     with open(filename, "w") as file:
         file.write(file_data)
-

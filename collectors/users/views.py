@@ -7,7 +7,7 @@ from datas.permissions import CheckAppKey
 class UserViewByAppKey(APIView):
     permission_classes = [CheckAppKey]
 
-    def get(self, request):
+    def get(self, request, format=None):
         app_key = request.META.get('HTTP_APP_KEY')
         user = UsersUser.objects.get(app_key=app_key)
         serializer = AppKeySerializer(user)
