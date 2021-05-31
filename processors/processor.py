@@ -91,7 +91,7 @@ while True:
         headers_processor = {'content-type': 'application/json', 'app-key': app_key}
         app = requests.get(api_get_infor_of_app, headers=headers_processor).json()
         app_id, authorization_field, api_identify = app['app_id'], app['authorization_field'], app['api_identify']
-        api_identify = 'http://eee080a9bf35.ngrok.io/api/nginx/decode'
+        api_identify = 'http://eae8b572e88a.ngrok.io/api/nginx/decode'
         with open(filename_data) as file_data:
             datas = file_data.read().splitlines(True)
 

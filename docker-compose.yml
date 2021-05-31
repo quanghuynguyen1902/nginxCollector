@@ -44,32 +44,77 @@ services:
       - ./nginxsite/.env
     networks:
       - backend
-
-      
-  plugin:
-    image: plugin
+  
+  collectors:
+    build:
+      context: ./collectors
+      dockerfile: Dockerfile.Web
+    restart: always
     volumes:
-      - ./plugin:/app
-      - ./client/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./client/var/log/nginx/access.log:/var/log/nginx/access.log
+      - ./collectors:/app
+      - ./dataStore:/app/dataStore
+    ports:
+      - "8002:8000"
+    depends_on:
+      - postgresuser
     networks:
       - backend
     env_file:
-      - ./plugin/.env
-
-  nginxs:
-    image: nginx:latest
-    volumes:
-      - ./client/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./client/etc/nginx/header.js:/etc/nginx/header.js
-      - ./client/var/log/nginx:/var/log/nginx
-      - ./client/etc/nginx/conf.d/book.conf:/etc/nginx/conf.d/book.conf
+      - ./collectors/.env
+  
+  processors:
+    image: processors
     restart: always
-    ports:
-      - 85:80
-      - 445:443
+    volumes:
+      - ./dataStore:/app/dataStore
+      - ./processors:/app
     networks:
       - backend
+    env_file:
+      - ./processors/.env
+    
+  nginxsite:
+    build:
+      context: ./nginxsite
+      dockerfile: Dockerfile.Web
+    restart: always
+    volumes:
+      - ./nginxsite:/app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgresuser
+      - mongo
+      - broker
+    networks:
+      - backend
+    env_file:
+      - ./nginxsite/.env
+      
+  # plugin:
+  #   image: plugin
+  #   volumes:
+  #     - ./plugin:/app
+  #     - ./client/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./client/var/log/nginx/access.log:/var/log/nginx/access.log
+  #   networks:
+  #     - backend
+  #   env_file:
+  #     - ./plugin/.env
+
+  # nginxs:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./client/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./client/etc/nginx/header.js:/etc/nginx/header.js
+  #     - ./client/var/log/nginx:/var/log/nginx
+  #     - ./client/etc/nginx/conf.d/book.conf:/etc/nginx/conf.d/book.conf
+  #   restart: always
+  #   ports:
+  #     - 85:80
+  #     - 445:443
+  #   networks:
+  #     - backend
 
 
   postgres:
@@ -206,51 +251,22 @@ services:
     depends_on:
       - zookeeper-kafka
   
-  collectors:
-    build:
-      context: ./collectors
-      dockerfile: Dockerfile.Web
-    restart: always
-    volumes:
-      - ./collectors:/app
-      - ./dataStore:/app/dataStore
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgresuser
-    networks:
-      - backend
-    env_file:
-      - ./collectors/.env
-  
-  processors:
-    image: processors
-    restart: always
-    volumes:
-      - ./dataStore:/app/dataStore
-      - ./processors:/app
-    networks:
-      - backend
-    env_file:
-      - ./processors/.env
-    
-  nginxsite:
-    build:
-      context: ./nginxsite
-      dockerfile: Dockerfile.Web
-    restart: always
-    volumes:
-      - ./nginxsite:/app
-    ports:
-      - "8001:8001"
-    depends_on:
-      - postgresuser
-      - mongo
-    networks:
-      - backend
-    env_file:
-      - ./nginxsite/.env
 
+  
+  monitor:
+    image: monitor 
+    restart: always
+    volumes:
+      - ./monitoring:/app
+    networks:
+      - backend
+    depends_on:
+      - nginxsite
+    env_file:
+      - ./monitoring/.env 
+    ports:
+      - "8080:8080"     
+  
 networks:
   backend:
     driver: bridge

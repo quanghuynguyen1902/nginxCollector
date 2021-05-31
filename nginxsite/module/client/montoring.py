@@ -18,11 +18,10 @@ try:
     Session.configure(bind=engine)
     session = Session()
 except:
-    print("Not connect druid")
+    print('Not connected druid')
 
 def get_data(app_id, page=1):
     per_page = 10
-    print(app_id)
     page = int(page)
     data = []
     counts = 0
