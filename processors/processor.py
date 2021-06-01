@@ -129,7 +129,7 @@ while True:
                 files.write(filename_data)
             if os.path.exists(filename):
                 os.remove(filename)
-            break
+            continue
         
         #remove file data nginx 
         if os.path.exists(filename):
