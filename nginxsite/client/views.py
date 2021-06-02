@@ -9,6 +9,7 @@ class Requests(APIView):
     permissions_classes = [IsAuthenticated]
     def get(self, request):        
         app_id = request.user.app_id
+        print(app_id)
         page = self.request.GET.get('page', None)
         if(page):
             data, counts = montoring.get_data(app_id, page) 

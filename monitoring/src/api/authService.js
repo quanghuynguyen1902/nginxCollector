@@ -3,7 +3,6 @@ import api from "@/constants/backendApi";
 
 class AuthService {
   login(user) {
-    console.log(api.LOGIN)
     return axios
       .post(api.LOGIN, {
         email: user.email,
